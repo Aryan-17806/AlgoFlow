@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Fibonacci Recorder v5</title>
+<style>
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    background:transparent;
+    color:#cfe8ff;
+    font-family:'Courier New',monospace;
+    display:flex;
+    justify-content:center;
+    align-items:flex-start;
+    min-height:100vh;
+    padding:20px;
+  }
+  #wrap{
+    width:min(100%, 980px);
+    background:transparent;
+    border:1.5px solid rgba(80,140,210,.35);
+    border-radius:14px;
+    padding:16px;
+    overflow:hidden;
+    box-shadow:0 18px 60px rgba(0,0,0,.35);
+  }
+  canvas{
+    width:100%;
+    height:auto;
+    display:block;
+    border-radius:10px;
+    border:1px solid rgba(80,140,210,.2);
+    background:transparent;
+  }
+  #controls{
+    display:flex;
+    gap:12px;
+    margin-top:14px;
+    flex-wrap:wrap;
+  }
+  button{
+    flex:1 1 240px;
+    min-height:46px;
+    padding:10px 14px;
+    background:transparent;
+    border:1px solid #1e6ab0;
+    color:#cfe8ff;
+    border-radius:8px;
+    cursor:pointer;
+    font-size:15px;
+    font-family:'Courier New',monospace;
+  }
+  #recBtn{border-color:#e74c3c;color:#ffd8d4}
+  #recBtn.recording{animation:pulse .8s ease-in-out infinite alternate}
+  @keyframes pulse{from{opacity:1}to{opacity:.55}}
+  #status{
+    text-align:center;
+    font-size:13px;
+    color:#7fb6dd;
+    margin-top:10px;
+    min-height:18px;
+  }
+</style>
+</head>
+<body>
+<div id="wrap">
+  <canvas id="fc"></canvas>
+  <div id="status">Ready</div>
+</div>
+
+<script>
+(function(){
+  const DPR = Math.min(window.devicePixelRatio || 1, 2);
+  const CW = 940, CH = 640;
+  const cv = document.getElementById('fc');
+  cv.width = CW * DPR;
+  cv.height = CH * DPR;
+  const ctx = cv.getContext('2d');
+  ctx.scale(DPR, DPR);
+  const st = document.getElementById('status');
+
+  let leafCounter = 0;
+  function makeTree(n, depth){
+    const node = { n, lbl:'f(' + n + ')', ch:[], depth };
+    if(n > 1){
+      node.ch.push(makeTree(n - 1, depth + 1));
+      node.ch.push(makeTree(n - 2, depth + 1));
+    }
+    return node;
+  }
+  function assignLeafOrder(node){
+    if(!node.ch.length){
+      node.rx = leafCounter++;
+      return;
+    }
+    node.ch.forEach(assignLeafOrder);
+    node.rx = (node.ch[0].rx + node.ch[node.ch.length - 1].rx) / 2;
+  }
+  function flatten(root){
+    const out = [], q = [root];
+    while(q.length){
+      const n = q.shift();
+      out.push(n);
+      n.ch.forEach(c => { c.par = n; q.push(c); });
+    }
+    return out;
+  }
+
+  const tree = makeTree(5, 0);
+  assignLeafOrder(tree);
+  const all = flatten(tree);
+
+  let maxLeaf = leafCounter - 1;
+  let maxDepth = 0;
+  all.forEach(n => maxDepth = Math.max(maxDepth, n.depth));
+
+  const RX = 24, RY = 15;
+  const TREE_X0 = 30;
+  const TREE_X1 = 535;
+  const TREE_TOP = 88;
+  const TREE_BOTTOM = 48;
+
+  const usableWidth = (TREE_X1 - TREE_X0) - RX * 2;
+  const usableHeight = (CH - TREE_TOP - TREE_BOTTOM) - RY * 2;
+  const sx = maxLeaf > 0 ? usableWidth / maxLeaf : 0;
+  const sy = maxDepth > 0 ? usableHeight / maxDepth : 0;
+
+  all.forEach(n => {
+    n.cx = TREE_X0 + RX + n.rx * sx;
+    n.cy = TREE_TOP + RY + n.depth * sy;
+  });
+
+  const pIdx = [];
+  all.forEach((n, i) => {
+    pIdx[i] = -1;
+    if(n.par){
+      for(let j = 0; j < all.length; j++){
+        if(all[j] === n.par){ pIdx[i] = j; break; }
+      }
+    }
+  });
+
+  let vis = Array(all.length).fill(false);
+  let alp = Array(all.length).fill(0);
+  let revealIndex = 0, lastTs = null, done = false;
+  const DELAY = 600;
+
+  let recorder = null, chunks = [], isRec = false;
+
+  const CODE_X = 570, CODE_Y = 86, CODE_W = 320, CODE_H = 430;
+  const codeLines = [
+    'class Fibonacci {',
+    '  static int fib(int n){',
+    '    if(n<=1) return n;',
+    '    return fib(n-1) + fib(n-2);',
+    '  }',
+    '',
+    'public static void main',
+    '(String[] args){',
+    '{ System.out.println(fib(5));',
+    '  }',
+    '}'
+  ];
+
+  function roundRect(c,x,y,w,h,r){
+    c.beginPath();
+    c.moveTo(x+r,y);
+    c.lineTo(x+w-r,y);
+    c.arcTo(x+w,y,x+w,y+r,r);
+    c.lineTo(x+w,y+h-r);
+    c.arcTo(x+w,y+h,x+w-r,y+h,r);
+    c.lineTo(x+r,y+h);
+    c.arcTo(x,y+h,x,y+h-r,r);
+    c.lineTo(x,y+r);
+    c.arcTo(x,y,x+r,y,r);
+    c.closePath();
+  }
+
+  function colorLine(txt, x, y){
+    const kw = ['class','static','int','void','public','return','if'];
+    ctx.font = '14px "Courier New", monospace';
+    ctx.textBaseline = 'top';
+    let cx = x;
+    const tokens = txt.split(/(\b)/);
+    tokens.forEach(tok => {
+      let clr = '#b9d8f2';
+      if(kw.includes(tok)) clr = '#4ec9b0';
+      else if(/^(fib|println|main)$/.test(tok)) clr = '#dcdcaa';
+      else if(/^(Fibonacci|String|System|out)$/.test(tok)) clr = '#4fc1ff';
+      else if(/^\d+$/.test(tok)) clr = '#b5cea8';
+      ctx.fillStyle = clr;
+      ctx.fillText(tok, cx, y);
+      cx += ctx.measureText(tok).width;
+    });
+  }
+
+  function drawStatic(){
+    ctx.clearRect(0,0,CW,CH);
+    ctx.fillStyle = '#071c38';
+    ctx.fillRect(0,0,CW,CH);
+
+    ctx.save();
+    ctx.fillStyle = '#89d9ff';
+    ctx.font = 'bold 24px "Courier New", monospace';
+    ctx.textAlign = 'left';
+    ctx.textBaseline = 'middle';
+    ctx.shadowBlur = 10;
+    ctx.shadowColor = '#38bdf8';
+    ctx.fillText('Fibonacci Recursion Visualization', 36, 38);
+    ctx.restore();
+
+    ctx.save();
+    ctx.fillStyle = '#ffffff';
+    ctx.font = 'bold 18px "Courier New", monospace';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('Java Code', CODE_X + CODE_W / 2, 56);
+    ctx.restore();
+
+    ctx.save();
+    ctx.fillStyle = '#03101f';
+    ctx.strokeStyle = '#1e6ab0';
+    ctx.lineWidth = 2;
+    roundRect(ctx, CODE_X, CODE_Y, CODE_W, CODE_H, 10);
+    ctx.fill();
+    ctx.stroke();
+    ctx.restore();
+
+    const lineH = 31;
+    const startY = CODE_Y + 18;
+    codeLines.forEach((line, i) => colorLine(line, CODE_X + 16, startY + i * lineH));
+  }
+
+  function drawEdge(i){
+    const pi = pIdx[i];
+    if(pi < 0 || !vis[pi]) return;
+    const a = Math.min(1, alp[i] * 2.8);
+    if(a <= 0.01) return;
+
+    const p = all[pi], n = all[i];
+    ctx.save();
+    ctx.globalAlpha = a * 0.88;
+    ctx.strokeStyle = '#38bdf8';
+    ctx.lineWidth = 2;
+    ctx.shadowBlur = 8;
+    ctx.shadowColor = '#00ffff88';
+    ctx.beginPath();
+    ctx.moveTo(p.cx, p.cy + RY);
+    ctx.lineTo(n.cx, n.cy - RY);
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  function drawNode(i){
+    const a = alp[i];
+    if(a <= 0.01) return;
+    const n = all[i];
+
+    ctx.save();
+    ctx.globalAlpha = a;
+    ctx.shadowBlur = 18;
+    ctx.shadowColor = '#00ff99';
+    ctx.beginPath();
+    ctx.ellipse(n.cx, n.cy, RX, RY, 0, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(0,140,80,.45)';
+    ctx.fill();
+    ctx.strokeStyle = '#000099';
+    ctx.lineWidth = 1.8;
+    ctx.stroke();
+    ctx.shadowBlur = 0;
+    ctx.fillStyle = '#000099';
+    ctx.font = 'bold 12px "Courier New", monospace';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(n.lbl, n.cx, n.cy);
+    ctx.restore();
+  }
+
+  function reveal(){
+    if(revealIndex >= all.length) return;
+    vis[revealIndex] = true;
+    alp[revealIndex] = 0.01;
+    revealIndex++;
+    st.textContent = revealIndex < all.length
+      ? 'Building... ' + revealIndex + ' / ' + all.length + ' nodes'
+      : 'f(5) = 5  ✓';
+  }
+
+  function animate(ts){
+    if(lastTs === null){
+      lastTs = ts;
+      reveal();
+    }else if(ts - lastTs >= DELAY && revealIndex < all.length){
+      reveal();
+      lastTs = ts;
+    }
+
+    for(let i = 0; i < all.length; i++){
+      if(vis[i] && alp[i] < 1) alp[i] = Math.min(1, alp[i] + 0.055);
+    }
+
+    drawStatic();
+    for(let i = 0; i < all.length; i++) if(vis[i]) drawEdge(i);
+    for(let i = 0; i < all.length; i++) if(vis[i]) drawNode(i);
+
+    const allShown = revealIndex >= all.length && alp.every(v => v >= 1);
+      if(allShown && !done){
+        done = true;
+
+        setTimeout(() => {
+          reset();       
+          lastTs = null; 
+          done = false;  
+        }, 1500);
+      }
+    requestAnimationFrame(animate);
+  }
+
+  function reset(){
+    vis = Array(all.length).fill(false);
+    alp = Array(all.length).fill(0);
+    revealIndex = 0;
+    lastTs = null;
+    done = false;
+  }
+
+  window.doReplay = function(){
+    reset();
+    st.textContent = 'Replay started';
+  };
+
+  window.toggleRecord = function(){
+    if(isRec){ stopRecord(false); return; }
+
+    const stream = cv.captureStream(30);
+    chunks = [];
+    let mime = 'video/webm;codecs=vp9';
+
+    if(!MediaRecorder.isTypeSupported(mime)) mime = 'video/webm';
+
+    recorder = new MediaRecorder(stream, { mimeType: mime, videoBitsPerSecond: 4000000 });
+    recorder.ondataavailable = e => { if(e.data && e.data.size > 0) chunks.push(e.data); };
+    recorder.onstop = () => {
+      const blob = new Blob(chunks, { type:mime });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'fibonacci_recursion.webm';
+      document.body.appendChild(a);
+      a.click();
+      setTimeout(() => {
+        URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+      }, 1000);
+      st.textContent = ' Video downloaded!';
+    };
+
+    recorder.start(100);
+    isRec = true;
+    document.getElementById('recBtn').classList.add('recording');
+    document.getElementById('recBtn').textContent = '⏹ Stop Recording';
+    reset();
+    st.textContent = ' Recording...';
+  };
+
+  function stopRecord(auto){
+    if(!recorder || recorder.state === 'inactive') return;
+    recorder.stop();
+    isRec = false;
+    document.getElementById('recBtn').classList.remove('recording');
+    document.getElementById('recBtn').textContent = ' Record & Download';
+    if(!auto) st.textContent = 'Saving video...';
+  }
+
+  requestAnimationFrame(animate);
+})();
+</script>
+</body>
+</html>

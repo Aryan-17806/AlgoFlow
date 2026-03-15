@@ -14,7 +14,6 @@ const scrollToCategory = () => {
 return (
 <div className="home">
 
-{/* HERO */}
 
 <section className="hero">
 
@@ -36,16 +35,16 @@ Get Started →
 </button>
 
 </div>
-
-{/* Animated Right Cards */}
-
 <div className="hero-right">
 
-<div className="algo-card quick">Quick Sort</div>
-
-<div className="algo-card dijkstra">Dijkstra Path</div>
+<iframe
+  src="/fibonacci-demo.html"
+  title="Algorithm Demo"
+  className="hero-demo"
+/>
 
 </div>
+
 
 </section>
 

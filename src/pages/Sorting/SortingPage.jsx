@@ -1,36 +1,78 @@
+import "./Sorting.css";
+import { Link } from "react-router-dom";
+
 function SortingPage() {
-
   return (
-    <div className="container mt-5">
+    <div className="sorting-page">
+      <div className="container py-5">
 
-      <h2 className="mb-4">
-        Sorting Algorithms
-      </h2>
+        <h1 className="text-center mb-5">Sorting Algorithms</h1>
 
-      <div className="list-group">
+        <div className="row g-4">
 
-        <button className="list-group-item list-group-item-action">
-          Bubble Sort
-        </button>
+          <div className="col-md-4">
+            <div className="sort-card p-4 text-center">
+              <h4>Bubble Sort</h4>
+              <p>Repeatedly swaps adjacent elements if they are in wrong order.</p>
 
-        <button className="list-group-item list-group-item-action">
-          Selection Sort
-        </button>
+              <Link to="/sorting/bubble" className="btn btn-primary mt-3">
+                Open Visualizer
+              </Link>
 
-        <button className="list-group-item list-group-item-action">
-          Insertion Sort
-        </button>
+            </div>
+          </div>
 
-        <button className="list-group-item list-group-item-action">
-          Merge Sort
-        </button>
+          <div className="col-md-4">
+            <div className="sort-card p-4 text-center">
+              <h4>Selection Sort</h4>
+              <p>Selects the smallest element and places it in correct position.</p>
 
-        <button className="list-group-item list-group-item-action">
-          Quick Sort
-        </button>
+              <Link to="/sorting/selection" className="btn btn-primary mt-3">
+                Open Visualizer
+              </Link>
+
+            </div>
+          </div>
+
+          <div className="col-md-4">
+            <div className="sort-card p-4 text-center">
+              <h4>Insertion Sort</h4>
+              <p>Builds the sorted array one element at a time.</p>
+
+              <Link to="/sorting/insertion" className="btn btn-primary mt-3">
+                Open Visualizer
+              </Link>
+
+            </div>
+          </div>
+
+          <div className="col-md-6">
+            <div className="sort-card p-4 text-center">
+              <h4>Merge Sort</h4>
+              <p>Divide and conquer algorithm that splits arrays and merges them.</p>
+
+              <Link to="/sorting/merge" className="btn btn-primary mt-3">
+                Open Visualizer
+              </Link>
+
+            </div>
+          </div>
+
+          <div className="col-md-6">
+            <div className="sort-card p-4 text-center">
+              <h4>Quick Sort</h4>
+              <p>Efficient divide-and-conquer sorting algorithm.</p>
+
+              <Link to="/sorting/quick" className="btn btn-primary mt-3">
+                Open Visualizer
+              </Link>
+
+            </div>
+          </div>
+
+        </div>
 
       </div>
-
     </div>
   );
 }

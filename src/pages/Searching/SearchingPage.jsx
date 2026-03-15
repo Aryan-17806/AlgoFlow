@@ -1,24 +1,50 @@
+import "./SearchingPage.css";
+import { Link } from "react-router-dom";
+
 function SearchingPage() {
-
   return (
-    <div className="container mt-5">
+    <div className="search-page">
+      <div className="container py-5">
 
-      <h2 className="mb-4">
-        Searching Algorithms
-      </h2>
+        <h1 className="mb-5">Searching Algorithms</h1>
 
-      <div className="list-group">
+        <div className="row g-4">
 
-        <button className="list-group-item list-group-item-action">
-          Linear Search
-        </button>
+          <div className="col-md-6">
+            <div className="algo-card p-4">
+              <h4>Linear Search</h4>
 
-        <button className="list-group-item list-group-item-action">
-          Binary Search
-        </button>
+              <p>
+                Checks each element one by one.
+                <br />
+                Time Complexity: O(n)
+              </p>
+
+              <Link to="/searching/linear" className="btn btn-primary mt-3">
+                Open Visualizer →
+              </Link>
+            </div>
+          </div>
+
+          <div className="col-md-6">
+            <div className="algo-card p-4">
+              <h4>Binary Search</h4>
+
+              <p>
+                Works on sorted arrays by dividing search space.
+                <br />
+                Time Complexity: O(log n)
+              </p>
+
+              <Link to="/searching/binary" className="btn btn-primary mt-3">
+                Open Visualizer →
+              </Link>
+            </div>
+          </div>
+
+        </div>
 
       </div>
-
     </div>
   );
 }
