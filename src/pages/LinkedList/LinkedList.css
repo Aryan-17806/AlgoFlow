@@ -1,24 +1,28 @@
-.sorting-page{
+.linkedlist-page{
   min-height:100vh;
   background:#000;
   color:white;
 }
-
-.sort-card{
+*{
+    font-family: 'Times New Roman', Times, serif;
+    font-size: large;
+}
+.ll-card{
   background:#0f172a;
   border-radius:12px;
   border:1px solid rgba(255,255,255,0.05);
   height:100%;
 }
 
-.sort-card h4{
+.ll-card h4{
   margin-bottom:10px;
 }
-*{
-    font-family: 'Times New Roman', Times, serif;
-    font-size: large;
-}
-.sort-card p{
+
+.ll-card p{
   color:#cbd5f5;
   font-size:14px;
+}
+
+*{
+  font-family: 'Times New Roman', Times, serif;
 }
