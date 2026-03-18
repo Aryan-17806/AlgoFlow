@@ -48,7 +48,6 @@ Get Started →
 
 </section>
 
-{/* FEATURES */}
 
 <section className="features">
 
@@ -86,7 +85,6 @@ Get hints and explanations for complex problems.
 
 </section>
 
-{/* EXPLORE CATEGORIES */}
 
 <section ref={categoryRef} className="categories">
 
