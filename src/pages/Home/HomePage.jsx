@@ -22,7 +22,7 @@ return (
 
 <h1>
 Visualize Algorithms &
-<span className="highlight"> Data Structures</span>
+<span className="highlight"> Data Structures(dsa)</span>
 </h1>
 
 <p>
