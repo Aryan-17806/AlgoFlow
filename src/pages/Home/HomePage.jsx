@@ -21,8 +21,8 @@ return (
 
 
 <h1>
-Visualize Algorithms &
-<span className="highlight"> Data Structures</span>
+  Visualize Algorithms & <br/>
+  <span className="highlight">Data Structures</span>
 </h1>
 
 <p>

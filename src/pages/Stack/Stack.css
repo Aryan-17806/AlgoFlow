@@ -1,29 +1,73 @@
-*{
-    font-family: 'Times New Roman', Times, serif;
-    font-size: large;
-}
-.stack-page{
-  min-height:100vh;
-  background:#000;
-  color:white;
+* {
+  box-sizing: border-box;
+    font-family: "Times New Roman", Times, serif;
+
 }
 
-.stack-card{
-  background:#0f172a;
-  border-radius:12px;
-  border:1px solid rgba(255,255,255,0.05);
-  height:100%;
+.stack-page {
+  min-height: 100vh;
+  padding: 80px 20px;
+  background: #000;
+  color: #fff;
 }
 
-.stack-card h4{
-  margin-bottom:10px;
+.stack-page h1 {
+  text-align: center;
+  font-size: 3rem;
+  margin-bottom: 60px;
 }
 
-.stack-card p{
-  color:#cbd5f5;
-  font-size:14px;
+.stack-grid {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 30px;
 }
 
-*{
-  font-family:'Times New Roman', Times, serif;
+.stack-card {
+  background: #020233;
+  padding: 30px;
+  border-radius: 16px;
+  text-align: center;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.stack-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.6);
+}
+
+.stack-card h3 {
+  font-size: 1.5rem;
+  margin-bottom: 15px;
+}
+
+.stack-card p {
+  color: #cbd5e1;
+  line-height: 1.6;
+  font-size: 0.95rem;
+}
+
+.stack-open-btn {
+  display: inline-block;
+  margin-top: 25px;
+  padding: 12px 22px;
+  border-radius: 10px;
+  background: #143f9d;
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+  transition: background 0.2s ease;
+}
+
+.stack-open-btn:hover {
+  background: #07236f;
+}
+
+@media (max-width: 900px) {
+  .stack-grid {
+    grid-template-columns: 1fr;
+  }
 }

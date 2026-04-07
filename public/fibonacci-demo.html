@@ -3,90 +3,42 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Fibonacci Recorder v5</title>
-<style>
-  *{box-sizing:border-box}
-  /* body{
-    margin:0;
-    background:transparent;
-    color:#f6f7f8;
-    font-family:'Courier New',monospace;
-    display:flex;
-    justify-content:center;
-    align-items:flex-start;
-    min-height:100vh;
-    padding:20px;
-  } */
-  body{
-  margin:0;
-  background:#000;
-  color:#020e19;
-  font-family:'Times New Roman', Times, serif;
+<title>Fibonacci Visualization</title>
 
+<style>
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  background:radial-gradient(circle at top,#0b0f1a,#000);
   display:flex;
   justify-content:center;
   align-items:center;
-
   height:100vh;
-
-  overflow:hidden;   
+  overflow:hidden;
+  font-family: "Courier New", monospace;
 }
-  #wrap{
-    width:min(100%, 980px);
-    background:transparent;
-    border:1.5px solid rgba(4, 34, 72, 0.35);
-    border-radius:14px;
-    padding:16px;
-    overflow:hidden;
-    box-shadow:0 18px 60px rgba(0,0,0,.35);
-  }
-  canvas{
-    width:100%;
-    height:auto;
-    display:block;
-    border-radius:10px;
-    border:1px solid rgba(80,140,210,.2);
-    background:transparent;
-  }
-  #controls{
-    display:flex;
-    gap:12px;
-    margin-top:14px;
-    flex-wrap:wrap;
-  }
-  button{
-    flex:1 1 240px;
-    min-height:46px;
-    padding:10px 14px;
-    background:transparent;
-    border:1px solid #1e6ab0;
-    color:#01080e;
-    border-radius:8px;
-    cursor:pointer;
-    font-size:15px;
-    font-family:'Courier New',monospace;
-  }
-  #recBtn{border-color:#e74c3c;color:#ffd8d4}
-  #recBtn.recording{animation:pulse .8s ease-in-out infinite alternate}
-  @keyframes pulse{from{opacity:1}to{opacity:.55}}
-  #status{
-    text-align:center;
-    font-size:13px;
-    color:#7fb6dd;
-    margin-top:10px;
-    min-height:18px;
-  }
+
+#wrap{
+  width:940px;
+  height:640px;
+}
+
+canvas{
+  width:100%;
+  height:100%;
+  display:block;
+}
 </style>
 </head>
+
 <body>
+
 <div id="wrap">
   <canvas id="fc"></canvas>
-  <div id="status">Ready</div>
 </div>
 
 <script>
-(function(){
-
 const DPR = Math.min(window.devicePixelRatio || 1, 2);
 const CW = 940, CH = 640;
 
@@ -97,10 +49,7 @@ cv.height = CH * DPR;
 const ctx = cv.getContext('2d');
 ctx.scale(DPR, DPR);
 
-const st = document.getElementById('status');
-
 let leafCounter = 0;
-
 
 function makeTree(n, depth){
   const node = { n, lbl:'fib(' + n + ')', ch:[], depth };
@@ -111,13 +60,11 @@ function makeTree(n, depth){
   return node;
 }
 
-
 function getDFSOrder(node, arr=[]){
   arr.push(node);
   node.ch.forEach(c => getDFSOrder(c, arr));
   return arr;
 }
-
 
 function assignLeafOrder(node){
   if(!node.ch.length){
@@ -141,9 +88,7 @@ function flatten(root){
   return out;
 }
 
-
-const tree = makeTree(5,0);
-
+const tree = makeTree(6,0);
 assignLeafOrder(tree);
 
 const all = flatten(tree);
@@ -151,15 +96,13 @@ const dfsOrder = getDFSOrder(tree);
 
 let maxLeaf = leafCounter - 1;
 let maxDepth = 0;
-
 all.forEach(n => maxDepth = Math.max(maxDepth, n.depth));
 
-
 const RX=24, RY=15;
-const TREE_X0=30;
-const TREE_X1=535;
-const TREE_TOP=88;
-const TREE_BOTTOM=48;
+const TREE_X0=40;
+const TREE_X1=900;
+const TREE_TOP=100;
+const TREE_BOTTOM=50;
 
 const usableWidth=(TREE_X1-TREE_X0)-RX*2;
 const usableHeight=(CH-TREE_TOP-TREE_BOTTOM)-RY*2;
@@ -172,9 +115,7 @@ all.forEach(n=>{
   n.cy = TREE_TOP + RY + n.depth*sy;
 });
 
-
 const pIdx=[];
-
 all.forEach((n,i)=>{
   pIdx[i]=-1;
   if(n.par){
@@ -187,153 +128,130 @@ all.forEach((n,i)=>{
   }
 });
 
+let vis, alp, revealIndex, lastTs, activeIndex;
 
-let vis=Array(all.length).fill(false);
-let alp=Array(all.length).fill(0);
+const DELAY=1000;
 
-let revealIndex=0;
-let lastTs=null;
-let done=false;
-
-const DELAY=600;
-
-
-function drawStatic(){
-
-ctx.clearRect(0,0,CW,CH);
-
-ctx.fillStyle='#000000';
-ctx.fillRect(0,0,CW,CH);
-
-ctx.fillStyle='#FFFFFF';
-ctx.font='bold 24px Courier New';
-ctx.fillText('                                                          Fibonacci Recursion Visualization',36,38);
-
+function reset(){
+  vis = Array(all.length).fill(false);
+  alp = Array(all.length).fill(0);
+  revealIndex = 0;
+  lastTs = null;
+  activeIndex = -1;
 }
 
-function drawEdge(i){
+reset();
 
-const pi=pIdx[i];
-if(pi<0 || !vis[pi]) return;
+function draw(){
+  ctx.clearRect(0,0,CW,CH);
 
-const p=all[pi];
-const n=all[i];
+  ctx.fillStyle='#000';
+  ctx.fillRect(0,0,CW,CH);
 
-ctx.strokeStyle='#FFFFFF';
-ctx.lineWidth=2;
+  ctx.fillStyle='#00eaff';
+  ctx.font='bold 24px Courier New';
+  ctx.fillText('Fibonacci Recursion Tree', 280, 40);
 
-ctx.beginPath();
-ctx.moveTo(p.cx,p.cy+RY);
-ctx.lineTo(n.cx,n.cy-RY);
-ctx.stroke();
-}
+  for(let i=0;i<all.length;i++){
+    if(vis[i]){
+      const pi=pIdx[i];
+      if(pi>=0 && vis[pi]){
+        const p=all[pi], n=all[i];
 
-function drawNode(i){
+        ctx.beginPath();
+        ctx.moveTo(p.cx,p.cy+RY);
+        ctx.lineTo(n.cx,n.cy-RY);
 
-if(alp[i]<=0) return;
+        if(i===activeIndex){
+          ctx.strokeStyle='#00eaff';
+          ctx.shadowColor='#00eaff';
+          ctx.shadowBlur=12;
+        }else{
+          ctx.strokeStyle='rgba(255,255,255,0.3)';
+          ctx.shadowBlur=0;
+        }
 
-const n=all[i];
+        ctx.stroke();
+        ctx.shadowBlur=0;
+      }
+    }
+  }
 
-ctx.globalAlpha=alp[i];
+  for(let i=0;i<all.length;i++){
+    if(alp[i]>0){
+      const n=all[i];
 
-ctx.beginPath();
-ctx.ellipse(n.cx,n.cy,RX,RY,0,0,Math.PI*2);
+      ctx.globalAlpha=alp[i];
 
-ctx.fillStyle='rgba(255,255,255,0.45)';
-ctx.fill();
+      ctx.beginPath();
+      ctx.ellipse(n.cx,n.cy,RX,RY,0,0,Math.PI*2);
 
-ctx.strokeStyle='#ffffff';
-ctx.stroke();
+      if(i===activeIndex){
+        ctx.fillStyle='rgba(0,234,255,0.3)';
+        ctx.shadowColor='#00eaff';
+        ctx.shadowBlur=20;
+      }else{
+        ctx.fillStyle='rgba(255,255,255,0.1)';
+        ctx.shadowBlur=0;
+      }
 
-ctx.fillStyle='#ffffff';
-ctx.font='bold 12px Courier New';
-ctx.textAlign='center';
-ctx.textBaseline='middle';
+      ctx.fill();
 
-ctx.fillText(n.lbl,n.cx,n.cy);
+      ctx.strokeStyle=i===activeIndex?'#00eaff':'#aaa';
+      ctx.stroke();
 
-ctx.globalAlpha=1;
-}
+      ctx.fillStyle='#fff';
+      ctx.font='12px Courier New';
+      ctx.textAlign='center';
+      ctx.textBaseline='middle';
+      ctx.fillText(n.lbl,n.cx,n.cy);
 
-
-function reveal(){
-
-if(revealIndex >= dfsOrder.length) return;
-
-const node = dfsOrder[revealIndex];
-const index = all.indexOf(node);
-
-vis[index] = true;
-alp[index] = 0.01;
-
-revealIndex++;
-
-st.textContent =
-revealIndex < dfsOrder.length
-? "Building recursion... " + revealIndex
-: "f(5) = 5 ✓";
-
-}
-
-
-function animate(ts){
-
-if(lastTs===null){
-  lastTs=ts;
-  reveal();
-}
-else if(ts-lastTs>=DELAY && revealIndex<dfsOrder.length){
-  reveal();
-  lastTs=ts;
-}
-
-for(let i=0;i<all.length;i++){
-  if(vis[i] && alp[i]<1){
-    alp[i]=Math.min(1,alp[i]+0.055);
+      ctx.globalAlpha=1;
+      ctx.shadowBlur=0;
+    }
   }
 }
 
-drawStatic();
+function reveal(){
+  if(revealIndex >= dfsOrder.length) return;
 
-for(let i=0;i<all.length;i++){
-  if(vis[i]) drawEdge(i);
+  const node = dfsOrder[revealIndex];
+  const index = all.indexOf(node);
+
+  vis[index] = true;
+  alp[index] = 0.01;
+  activeIndex = index;
+
+  revealIndex++;
 }
 
-for(let i=0;i<all.length;i++){
-  if(vis[i]) drawNode(i);
-}
+function animate(ts){
+  if(lastTs===null){
+    lastTs=ts;
+    reveal();
+  }
+  else if(ts-lastTs>=DELAY){
+    if(revealIndex < dfsOrder.length){
+      reveal();
+      lastTs=ts;
+    }else{
+      setTimeout(reset,500);
+      lastTs=ts+1000;
+    }
+  }
 
-const finished =
-revealIndex >= dfsOrder.length &&
-alp.every(v=>v>=1);
+  for(let i=0;i<all.length;i++){
+    if(vis[i] && alp[i]<1){
+      alp[i]+=0.03;
+    }
+  }
 
-if(finished && !done){
-  done=true;
-  setTimeout(()=>{
-    reset();
-    lastTs=null;
-    done=false;
-  },1500);
+  draw();
+  requestAnimationFrame(animate);
 }
 
 requestAnimationFrame(animate);
-}
-
-
-function reset(){
-
-vis=Array(all.length).fill(false);
-alp=Array(all.length).fill(0);
-
-revealIndex=0;
-lastTs=null;
-done=false;
-
-}
-
-requestAnimationFrame(animate);
-
-})();
 </script>
+
 </body>
 </html>
