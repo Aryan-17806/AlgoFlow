@@ -1,5 +1,10 @@
 function PostfixPage() {
-  return <h1>Postfix Page Coming Soon</h1>;
+  return (
+<div className="bg-dark text-white min-vh-100 d-flex flex-column justify-content-center align-items-center">   
+       <h3>Postfix</h3>
+      <p>Visualization coming soon...</p>
+    </div>
+  );
 }
 
 export default PostfixPage;
