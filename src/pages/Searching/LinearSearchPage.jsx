@@ -1,8 +1,12 @@
+import LinearSearchVisualizer from "../../components/visualization/LinearSearchVisualizer";
+
 function LinearSearchPage() {
   return (
-    <div className="bg-dark text-white min-vh-100 d-flex flex-column justify-content-center align-items-center">   
-       <h3>Linear Search</h3>
-      <p>Visualization coming soon...</p>
+    <div className="search-page p-5">
+
+      {/* <h2>Linear Search</h2> */}
+      <LinearSearchVisualizer />
+
     </div>
   );
 }

@@ -5,7 +5,7 @@ function Navbar() {
     <nav
       className="navbar px-4 py-3 shadow"
       style={{
-        background: "linear-gradient(90deg, #00030a, #00020a)",
+        background: "linear-gradient(90deg, #01050c, #00020a)",
       }}
     >
         <Link
@@ -13,7 +13,7 @@ function Navbar() {
         className="navbar-brand m-0"
         style={{
           fontFamily: "Times New Roman, serif",
-          fontSize: "28px",
+          fontSize: "45px",
           fontWeight: "bold",
           color: "white",
           letterSpacing: "6px"

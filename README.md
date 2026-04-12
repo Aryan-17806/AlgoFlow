@@ -364,9 +364,6 @@ Contributions are welcome! To add new features:
 - **Environment variables** for secrets
 - **Rate limiting** recommended for production
 
-## 📝 License
-
-MIT License - feel free to use for personal and educational projects.
 
 ## 📧 Support
 
@@ -409,4 +406,4 @@ Happy Learning! 🎉
 ---
 
 **Last Updated:** April 2026
-**Version:** 1.0.0
+**Version:** 3.5.1

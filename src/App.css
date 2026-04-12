@@ -1,3 +1,12 @@
+/* body {
+  background: #000000 !important;
+  margin: 0;
+  padding: 0;
+}
+
+#root {
+  background: #000000;
+} */
 .counter {
   font-size: 16px;
   padding: 5px 10px;

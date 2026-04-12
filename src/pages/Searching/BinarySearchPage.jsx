@@ -1,8 +1,9 @@
+import BinarySearchVisualizer from "../../components/visualization/BinarySearchVisualizer";
+
 function BinarySearchPage() {
   return (
-    <div className="bg-dark text-white min-vh-100 d-flex flex-column justify-content-center align-items-center">   
-       <h3>Binary Search</h3>
-      <p>Visualization coming soon...</p>
+    <div className="search-page p-5">
+      <BinarySearchVisualizer />
     </div>
   );
 }

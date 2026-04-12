@@ -1,15 +1,13 @@
 .home{
-  background: radial-gradient(circle at top, #0b0f1a, #000);
+  background: radial-gradient(circle at top, #00030c, #000);
   color: white;
   min-height: 100vh;
 }
 
-/* Global font */
 *{
   font-family: 'Times New Roman', Times, serif;
 }
 
-/* HERO SECTION */
 .hero{
   display:flex;
   justify-content:space-between;
@@ -40,7 +38,6 @@
   font-size:16px;
 }
 
-/* BUTTON */
 .start-btn{
   background:linear-gradient(135deg,#00eaff,#3b82f6);
   border:none;
@@ -58,7 +55,6 @@
   box-shadow:0 0 30px #00eaffaa;
 }
 
-/* RIGHT SIDE DEMO */
 .hero-right{
   width:50%;
   display:flex;
@@ -75,7 +71,6 @@
   box-shadow:0 30px 80px rgba(0,0,0,0.8);
 }
 
-/* FEATURES */
 .features{
   display:grid;
   grid-template-columns:repeat(4,1fr);
@@ -104,7 +99,6 @@
   color:#00eaff;
 }
 
-/* CATEGORIES */
 .categories{
   padding:100px 120px;
   text-align:center;
@@ -139,4 +133,109 @@
   color:#000;
   border-color:#00eaff;
   box-shadow:0 0 20px #00eaff88;
+}
+@media (max-width: 1024px){
+
+  .hero{
+    flex-direction: column;
+    padding: 80px 40px;
+    text-align: center;
+  }
+
+  .hero-left{
+    width: 100%;
+  }
+
+  .hero-right{
+    width: 100%;
+  }
+
+  .hero-left h1{
+    font-size: 44px;
+  }
+
+  .highlight{
+    font-size: 48px;
+  }
+
+  .hero-demo{
+    width: 100%;
+    height: 420px;
+    transform: scale(1);
+  }
+
+  .features{
+    grid-template-columns: repeat(2,1fr);
+    padding: 60px 40px;
+  }
+
+  .categories{
+    padding: 80px 40px;
+  }
+}
+
+@media (max-width: 768px){
+
+  .hero{
+    padding: 60px 20px;
+  }
+
+  .hero-left h1{
+    font-size: 32px;
+  }
+
+  .highlight{
+    font-size: 36px;
+  }
+
+  .hero-left p{
+    font-size: 14px;
+  }
+
+  .start-btn{
+    padding: 12px 26px;
+    font-size: 14px;
+  }
+
+  .hero-demo{
+    height: 300px;
+  }
+
+  .features{
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .feature-card{
+    padding: 20px;
+  }
+
+  .categories h2{
+    font-size: 28px;
+  }
+
+  .category-buttons{
+    gap: 15px;
+  }
+
+  .category-buttons button{
+    font-size: 14px;
+    padding: 10px 20px;
+  }
+}
+
+@media (max-width: 480px){
+
+  .hero-left h1{
+    font-size: 26px;
+  }
+
+  .highlight{
+    font-size: 30px;
+  }
+
+  .hero-demo{
+    height: 220px;
+  }
+
 }
