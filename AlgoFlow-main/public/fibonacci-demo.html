@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Fibonacci Visualization</title>
+
+<style>
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  background:radial-gradient(circle at top,#0b0f1a,#000);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  height:100vh;
+  overflow:hidden;
+  font-family: "Courier New", monospace;
+}
+
+#wrap{
+  width:940px;
+  height:640px;
+}
+
+canvas{
+  width:100%;
+  height:100%;
+  display:block;
+}
+</style>
+</head>
+
+<body>
+
+<div id="wrap">
+  <canvas id="fc"></canvas>
+</div>
+
+<script>
+const DPR = Math.min(window.devicePixelRatio || 1, 2);
+const CW = 940, CH = 640;
+
+const cv = document.getElementById('fc');
+cv.width = CW * DPR;
+cv.height = CH * DPR;
+
+const ctx = cv.getContext('2d');
+ctx.scale(DPR, DPR);
+
+let leafCounter = 0;
+
+function makeTree(n, depth){
+  const node = { n, lbl:'fib(' + n + ')', ch:[], depth };
+  if(n > 1){
+    node.ch.push(makeTree(n-1, depth+1));
+    node.ch.push(makeTree(n-2, depth+1));
+  }
+  return node;
+}
+
+function getDFSOrder(node, arr=[]){
+  arr.push(node);
+  node.ch.forEach(c => getDFSOrder(c, arr));
+  return arr;
+}
+
+function assignLeafOrder(node){
+  if(!node.ch.length){
+    node.rx = leafCounter++;
+    return;
+  }
+  node.ch.forEach(assignLeafOrder);
+  node.rx = (node.ch[0].rx + node.ch[node.ch.length-1].rx)/2;
+}
+
+function flatten(root){
+  const out=[], q=[root];
+  while(q.length){
+    const n=q.shift();
+    out.push(n);
+    n.ch.forEach(c=>{
+      c.par=n;
+      q.push(c);
+    });
+  }
+  return out;
+}
+
+const tree = makeTree(6,0);
+assignLeafOrder(tree);
+
+const all = flatten(tree);
+const dfsOrder = getDFSOrder(tree);
+
+let maxLeaf = leafCounter - 1;
+let maxDepth = 0;
+all.forEach(n => maxDepth = Math.max(maxDepth, n.depth));
+
+const RX=24, RY=15;
+const TREE_X0=40;
+const TREE_X1=900;
+const TREE_TOP=100;
+const TREE_BOTTOM=50;
+
+const usableWidth=(TREE_X1-TREE_X0)-RX*2;
+const usableHeight=(CH-TREE_TOP-TREE_BOTTOM)-RY*2;
+
+const sx=maxLeaf>0 ? usableWidth/maxLeaf : 0;
+const sy=maxDepth>0 ? usableHeight/maxDepth : 0;
+
+all.forEach(n=>{
+  n.cx = TREE_X0 + RX + n.rx*sx;
+  n.cy = TREE_TOP + RY + n.depth*sy;
+});
+
+const pIdx=[];
+all.forEach((n,i)=>{
+  pIdx[i]=-1;
+  if(n.par){
+    for(let j=0;j<all.length;j++){
+      if(all[j]===n.par){
+        pIdx[i]=j;
+        break;
+      }
+    }
+  }
+});
+
+let vis, alp, revealIndex, lastTs, activeIndex;
+
+const DELAY=1000;
+
+function reset(){
+  vis = Array(all.length).fill(false);
+  alp = Array(all.length).fill(0);
+  revealIndex = 0;
+  lastTs = null;
+  activeIndex = -1;
+}
+
+reset();
+
+function draw(){
+  ctx.clearRect(0,0,CW,CH);
+
+  ctx.fillStyle='#000';
+  ctx.fillRect(0,0,CW,CH);
+
+  ctx.fillStyle='#00eaff';
+  ctx.font='bold 24px Courier New';
+  ctx.fillText('Fibonacci Recursion Tree', 280, 40);
+
+  for(let i=0;i<all.length;i++){
+    if(vis[i]){
+      const pi=pIdx[i];
+      if(pi>=0 && vis[pi]){
+        const p=all[pi], n=all[i];
+
+        ctx.beginPath();
+        ctx.moveTo(p.cx,p.cy+RY);
+        ctx.lineTo(n.cx,n.cy-RY);
+
+        if(i===activeIndex){
+          ctx.strokeStyle='#00eaff';
+          ctx.shadowColor='#00eaff';
+          ctx.shadowBlur=12;
+        }else{
+          ctx.strokeStyle='rgba(255,255,255,0.3)';
+          ctx.shadowBlur=0;
+        }
+
+        ctx.stroke();
+        ctx.shadowBlur=0;
+      }
+    }
+  }
+
+  for(let i=0;i<all.length;i++){
+    if(alp[i]>0){
+      const n=all[i];
+
+      ctx.globalAlpha=alp[i];
+
+      ctx.beginPath();
+      ctx.ellipse(n.cx,n.cy,RX,RY,0,0,Math.PI*2);
+
+      if(i===activeIndex){
+        ctx.fillStyle='rgba(0,234,255,0.3)';
+        ctx.shadowColor='#00eaff';
+        ctx.shadowBlur=20;
+      }else{
+        ctx.fillStyle='rgba(255,255,255,0.1)';
+        ctx.shadowBlur=0;
+      }
+
+      ctx.fill();
+
+      ctx.strokeStyle=i===activeIndex?'#00eaff':'#aaa';
+      ctx.stroke();
+
+      ctx.fillStyle='#fff';
+      ctx.font='12px Courier New';
+      ctx.textAlign='center';
+      ctx.textBaseline='middle';
+      ctx.fillText(n.lbl,n.cx,n.cy);
+
+      ctx.globalAlpha=1;
+      ctx.shadowBlur=0;
+    }
+  }
+}
+
+function reveal(){
+  if(revealIndex >= dfsOrder.length) return;
+
+  const node = dfsOrder[revealIndex];
+  const index = all.indexOf(node);
+
+  vis[index] = true;
+  alp[index] = 0.01;
+  activeIndex = index;
+
+  revealIndex++;
+}
+
+function animate(ts){
+  if(lastTs===null){
+    lastTs=ts;
+    reveal();
+  }
+  else if(ts-lastTs>=DELAY){
+    if(revealIndex < dfsOrder.length){
+      reveal();
+      lastTs=ts;
+    }else{
+      setTimeout(reset,500);
+      lastTs=ts+1000;
+    }
+  }
+
+  for(let i=0;i<all.length;i++){
+    if(vis[i] && alp[i]<1){
+      alp[i]+=0.03;
+    }
+  }
+
+  draw();
+  requestAnimationFrame(animate);
+}
+
+requestAnimationFrame(animate);
+</script>
+
+</body>
+</html>
