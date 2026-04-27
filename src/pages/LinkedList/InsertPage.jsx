@@ -6,7 +6,6 @@ function LinkedListVisualizer() {
   const [index, setIndex] = useState("");
   const [highlight, setHighlight] = useState(null);
 
-  // insert at head
   const insertHead = () => {
     if (value === "") return;
 
@@ -26,7 +25,6 @@ function LinkedListVisualizer() {
     setValue("");
   };
 
-  // insert at tail
   const insertTail = () => {
     if (value === "") return;
 
@@ -46,7 +44,6 @@ function LinkedListVisualizer() {
     setValue("");
   };
 
-  // insert at index
   const insertIndex = () => {
     if (value === "" || index === "") return;
 
@@ -80,7 +77,15 @@ function LinkedListVisualizer() {
   };
 
   return (
-    <div style={{ padding: "20px" }}>
+    <div
+      style={{
+        padding: "20px",
+        backgroundColor: "black",
+        color: "white",
+        minHeight: "100vh",
+        fontFamily: "Times New Roman, serif",
+      }}
+    >
       <h2>Linked List Visualizer</h2>
 
       <div style={{ marginBottom: "20px" }}>
@@ -88,13 +93,25 @@ function LinkedListVisualizer() {
           placeholder="value"
           value={value}
           onChange={(e) => setValue(e.target.value)}
+          style={{
+            padding: "8px",
+            marginRight: "10px",
+            background: "black",
+            color: "white",
+            border: "1px solid white",
+          }}
         />
 
         <input
           placeholder="index"
           value={index}
           onChange={(e) => setIndex(e.target.value)}
-          style={{ marginLeft: "10px" }}
+          style={{
+            padding: "8px",
+            background: "black",
+            color: "white",
+            border: "1px solid white",
+          }}
         />
 
         <div style={{ marginTop: "10px" }}>
@@ -111,7 +128,6 @@ function LinkedListVisualizer() {
         </div>
       </div>
 
-      {/* visualization */}
       <div style={{ display: "flex", alignItems: "center" }}>
         {list.length === 0 && <p>List is empty</p>}
 
@@ -123,10 +139,10 @@ function LinkedListVisualizer() {
 
             <div
               style={{
-                border: "2px solid black",
+                border: "2px solid white",
                 padding: "15px",
                 margin: "5px",
-                background: "#eee",
+                background: "#111",
               }}
             >
               {node.value}
