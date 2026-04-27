@@ -159,7 +159,7 @@ const App = () => {
 
   return (
     <div style={styles.container}>
-      <h2>Linked List Search (Dark Mode)</h2>
+      <h2>Linked List Search</h2>
 
       <input
         style={styles.input}
