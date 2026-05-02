@@ -50,7 +50,7 @@ const NumberLinkedList = () => {
         fontFamily: '"Times New Roman", Times, serif',
       }}
     >
-      <h2>Number Linked List </h2>
+      <h2>LinkedList Deletion </h2>
 
       <div style={{ marginBottom: "20px" }}>
         <input
