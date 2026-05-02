@@ -6,7 +6,6 @@ export default function StackVisualizer() {
   const [input, setInput] = useState("");
   const [message, setMessage] = useState("");
 
-  // PUSH
   const handlePush = () => {
     if (input === "") return;
 
@@ -16,7 +15,6 @@ export default function StackVisualizer() {
     setMessage(`Pushed ${input}`);
   };
 
-  // POP
   const handlePop = () => {
     if (stack.length === 0) {
       setMessage("Stack Underflow!");
@@ -28,7 +26,6 @@ export default function StackVisualizer() {
     setMessage(`Popped ${popped}`);
   };
 
-  // PEEK
   const handlePeek = () => {
     if (stack.length === 0) {
       setMessage("Stack is Empty");
@@ -38,12 +35,10 @@ export default function StackVisualizer() {
     setMessage(`Top Element: ${stack[stack.length - 1]}`);
   };
 
-  // isEmpty
   const handleIsEmpty = () => {
     setMessage(stack.length === 0 ? "Stack is Empty" : "Stack is NOT Empty");
   };
 
-  // RESET
   const handleReset = () => {
     setStack([]);
     setMessage("Stack Reset");
