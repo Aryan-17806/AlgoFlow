@@ -6,6 +6,10 @@ export default function StackVisualizer() {
   const [input, setInput] = useState("");
   const [message, setMessage] = useState("");
 
+<<<<<<< HEAD
+=======
+  // PUSH
+>>>>>>> Anish01
   const handlePush = () => {
     if (input === "") return;
 
@@ -15,6 +19,10 @@ export default function StackVisualizer() {
     setMessage(`Pushed ${input}`);
   };
 
+<<<<<<< HEAD
+=======
+  // POP
+>>>>>>> Anish01
   const handlePop = () => {
     if (stack.length === 0) {
       setMessage("Stack Underflow!");
@@ -26,6 +34,10 @@ export default function StackVisualizer() {
     setMessage(`Popped ${popped}`);
   };
 
+<<<<<<< HEAD
+=======
+  // PEEK
+>>>>>>> Anish01
   const handlePeek = () => {
     if (stack.length === 0) {
       setMessage("Stack is Empty");
@@ -35,14 +47,26 @@ export default function StackVisualizer() {
     setMessage(`Top Element: ${stack[stack.length - 1]}`);
   };
 
+<<<<<<< HEAD
+=======
+  // isEmpty
+>>>>>>> Anish01
   const handleIsEmpty = () => {
     setMessage(stack.length === 0 ? "Stack is Empty" : "Stack is NOT Empty");
   };
 
+<<<<<<< HEAD
+=======
+  // RESET
+>>>>>>> Anish01
   const handleReset = () => {
     setStack([]);
     setMessage("Stack Reset");
   };
+<<<<<<< HEAD
+=======
+
+>>>>>>> Anish01
   return (
     <div className="container">
       <h1>Stack Visualizer</h1>
