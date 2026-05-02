@@ -86,7 +86,7 @@ function LinkedListVisualizer() {
         fontFamily: "Times New Roman, serif",
       }}
     >
-      <h2>Linked List Visualizer</h2>
+      <h2>LinkedList Insertion </h2>
 
       <div style={{ marginBottom: "20px" }}>
         <input
