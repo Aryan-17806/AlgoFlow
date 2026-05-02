@@ -1,14 +1,3 @@
-<<<<<<< HEAD
-function SearchPage() {
-  return (
-    <div className="bg-dark text-white min-vh-100 d-flex flex-column justify-content-center align-items-center">          <h3>Linked List Search</h3>
-      <p>Visualization coming soon...</p>
-    </div>
-  );
-}
-
-export default SearchPage;
-=======
 import React, { useState, useCallback, useRef } from 'react';
 
 const createNode = (value, id) => ({ value, id });
@@ -230,4 +219,3 @@ const App = () => {
 };
 
 export default App;
->>>>>>> Anish01

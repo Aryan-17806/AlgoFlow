@@ -1,9 +1,3 @@
-<<<<<<< HEAD
-function InsertPage() {
-  return (
-    <div className="bg-dark text-white min-vh-100 d-flex flex-column justify-content-center align-items-center">      <h3>Linked List Insertion</h3>
-      <p>Visualization coming soon...</p>
-=======
 import React, { useState } from "react";
 
 function LinkedListVisualizer() {
@@ -160,13 +154,8 @@ function LinkedListVisualizer() {
 
         {list.length > 0 && <span>NULL</span>}
       </div>
->>>>>>> Anish01
     </div>
   );
 }
 
-<<<<<<< HEAD
-export default InsertPage;
-=======
 export default LinkedListVisualizer;
->>>>>>> Anish01
