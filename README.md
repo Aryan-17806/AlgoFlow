@@ -1,4 +1,4 @@
-# AI-Enabled Data Structures & Algorithms Visualization Platform
+# AI-Enabled Data Structures & Algorithms Visualization
 
 > 🎓 Interactive visualization + deterministic simulation + AI explanations = Deep algorithmic understanding
 
