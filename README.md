@@ -405,5 +405,5 @@ Happy Learning! 🎉
 
 ---
 
-**Last Updated:** April 2026
-**Version:** 3.5.1
+**Last Updated:** May 2026
+**Version:** 6.2.1
