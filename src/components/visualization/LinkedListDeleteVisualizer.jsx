@@ -18,7 +18,7 @@ export default function LinkedListDeleteVisualizer() {
   const [deleteTargetIdx, setDeleteTargetIdx] = useState(-1);
   const [codeLine, setCodeLine] = useState(0);
   const [status, setStatus] = useState("Ready");
-  const [activeOp, setActiveOp] = useState(null); // 'head', 'tail', or 'value'
+  const [activeOp, setActiveOp] = useState(null);  
 
   const timerRef = useRef(null);
   useEffect(() => () => stop(), []);
@@ -195,7 +195,6 @@ export default function LinkedListDeleteVisualizer() {
     setInput("");
   };
 
-  // Dynamic code structure output based on current operation selection
   const getCompilerSourceCode = () => {
     if (activeOp === "head") {
       return [
@@ -227,6 +226,7 @@ export default function LinkedListDeleteVisualizer() {
         "    Node* temp = curr->next;",
         "    curr->next = nullptr; // Terminate trailing link",
         "    delete temp; // Release heap blocks",
+        
         "}"
       ];
     }
@@ -258,7 +258,6 @@ export default function LinkedListDeleteVisualizer() {
     <div className="visualizer-container">
       <div className="container-fluid p-4">
         {/* APP BRAND HEADER SECTION */}
-        <h1 className="app-brand-logo mb-4">AlgoFlow</h1>
         <h2 className="title mb-4">Linked List Deletion Visualizer</h2>
 
         <div className="row g-4">

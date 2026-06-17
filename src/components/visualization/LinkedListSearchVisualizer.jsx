@@ -120,7 +120,6 @@ export default function LinkedListSearchVisualizer() {
     <div className="visualizer-container">
       <div className="container-fluid p-4">
         {/* APP BRAND HEADER SECTION */}
-        <h1 className="app-brand-logo mb-4">AlgoFlow</h1>
         <h2 className="title mb-4">Linked List Search Visualizer</h2>
 
         <div className="row g-4">
